@@ -1,0 +1,207 @@
+==================================================================================
+DiffSBDD 迭代学习系统 - RE-CmeB蛋白分子优化
+==================================================================================
+
+【项目简介】
+
+本系统基于DiffSBDD (Structure-based Drug Design with Equivariant Diffusion Models)
+实现了一个迭代学习流程，专门用于为RE-CmeB蛋白生成优化的小分子配体。
+
+【核心功能】
+
+1. 智能生成：使用扩散模型批量生成分子
+2. 多维评估：综合QED、SA、LogP、Lipinski、对接打分等多个指标
+3. 迭代优化：通过30次迭代不断改进分子质量
+4. 高效训练：固定底层参数，只微调上层，加速训练
+
+【快速开始】
+
+第一步：环境设置
+-----------------
+chmod +x setup_environment.sh
+./setup_environment.sh
+
+这将：
+- 创建conda环境（diffsbdd）
+- 下载预训练模型
+- 可选安装smina（对接软件）
+
+第二步：准备数据
+-----------------
+1. 将RE-CmeB蛋白的PDB文件放到 proteins/ 目录
+   例如: proteins/RE-CmeB.pdb
+
+2. 确认口袋定义方式（二选一）：
+   方式A：如果PDB中有配体，记录其位置（链:残基ID）
+   方式B：手动指定口袋残基列表
+
+第三步：配置参数
+-----------------
+编辑 run_example.sh，修改以下参数：
+
+# 文件路径
+PDBFILE="./proteins/RE-CmeB.pdb"          # 你的蛋白文件
+
+# 口袋定义（选择一种）
+REF_LIGAND="A:330"                        # 方式A：参考配体
+# POCKET_IDS="A:1,A:2,A:3,A:4"            # 方式B：残基列表
+
+# 迭代参数（可根据需要调整）
+N_ITERATIONS=30      # 迭代次数
+TRAIN_EPOCHS=50      # 每次训练轮数
+BATCH_SIZE=8         # 批次大小
+
+第四步：运行
+-----------------
+conda activate diffsbdd
+chmod +x run_example.sh
+./run_example.sh
+
+【迭代流程】
+
+迭代1:
+  ├─ 生成2000个分子
+  ├─ 评估所有分子
+  ├─ 选出1000个最优分子
+  └─ 用这1000个分子训练模型
+
+迭代2-30:
+  ├─ 生成1000个新分子
+  ├─ 与上次的1000个合并（共2000个）
+  ├─ 评估所有分子
+  ├─ 选出1000个最优分子
+  └─ 用这1000个分子训练模型
+
+【评分系统】
+
+分子综合得分 = 0.25×QED + 0.25×SA + 0.15×LogP + 0.15×Lipinski + 0.20×Docking
+
+各指标说明：
+- QED：类药性，越接近1越好
+- SA：合成可及性，越接近1越容易合成
+- LogP：亲脂性，理想范围[-2, 5]
+- Lipinski：类药五规则，满足规则数量[0-5]
+- Docking：对接打分，越负越好（可选）
+
+【输出结果】
+
+results/RE-CmeB_iterative/
+├── molecules/                    # 生成的分子
+│   ├── iteration_1_generated.sdf     # 每次迭代生成的所有分子
+│   ├── iteration_1_selected.sdf      # 每次迭代选中的最优分子
+│   └── ...
+├── models/                       # 训练的模型
+│   ├── iteration_1_checkpoint.ckpt
+│   └── ...
+├── training_data/                # 训练数据
+│   ├── iteration_1_train.npz
+│   └── ...
+├── logs/                         # 日志和评分
+│   ├── iteration_1_scores.csv        # 详细评分
+│   ├── iteration_history.csv         # 迭代历史
+│   └── ...
+└── final_report.txt              # 最终报告
+
+【查看结果】
+
+1. 查看迭代历史:
+   cat results/RE-CmeB_iterative/logs/iteration_history.csv
+
+2. 查看最终报告:
+   cat results/RE-CmeB_iterative/final_report.txt
+
+3. 查看最优分子:
+   results/RE-CmeB_iterative/molecules/iteration_30_selected.sdf
+   （可用PyMOL、RDKit等可视化）
+
+【性能调优】
+
+GPU内存不足时：
+- 减小批次: BATCH_SIZE=4
+- 减少训练轮数: TRAIN_EPOCHS=30
+
+加速训练：
+- 增大批次: BATCH_SIZE=16 （需要更大GPU内存）
+- 减少训练轮数: TRAIN_EPOCHS=30
+- 增加冻结层数: FREEZE_LAYERS=5
+
+提高质量：
+- 增加训练轮数: TRAIN_EPOCHS=100
+- 使用对接打分: USE_DOCKING="--use_docking"
+- 降低学习率: LR=0.00005
+
+【常见问题】
+
+Q1: CUDA out of memory
+A1: 减小批次大小 BATCH_SIZE=4 或使用CPU（较慢）
+
+Q2: 生成的分子无效率高
+A2: 检查PDB文件格式、确认口袋定义正确
+
+Q3: 训练很慢
+A3: 确保使用GPU、增大批次、减少训练轮数
+
+Q4: 对接打分失败
+A4: 检查smina是否正确安装，或移除 --use_docking 参数
+
+【文件说明】
+
+iterative_generation.py      主程序，协调整个迭代流程
+molecule_evaluator.py        分子评估器，计算各种得分
+prepare_training_data.py     数据准备器，转换为训练格式
+train_frozen.py              冻结训练模块，固定底层训练上层
+run_example.sh               运行脚本
+setup_environment.sh         环境设置脚本
+README.md                    详细文档（英文）
+使用说明.txt                 本文件（中文简明说明）
+
+【技术细节】
+
+模型架构：
+- 基础模型：DiffSBDD (扩散模型)
+- EGNN层数：6层
+- 冻结策略：冻结前4层，训练后2层
+
+训练策略：
+- 优化器：AdamW
+- 学习率：1e-4
+- 早停策略：patience=10
+
+生成策略：
+- 去噪步数：500步
+- 批量生成：支持
+- 后处理：分子净化、选择最大片段
+
+【系统要求】
+
+最低配置：
+- CPU: 4核心
+- 内存: 16GB
+- GPU: NVIDIA GTX 1080 (8GB显存)
+- 磁盘: 20GB可用空间
+
+推荐配置：
+- CPU: 8核心以上
+- 内存: 32GB
+- GPU: NVIDIA RTX 3090 (24GB显存)
+- 磁盘: 50GB可用空间
+
+【引用】
+
+如使用本系统发表论文，请引用：
+
+Schneuing, A., Harris, C., Du, Y. et al. Structure-based drug design with 
+equivariant diffusion models. Nat Comput Sci 4, 899–909 (2024).
+https://doi.org/10.1038/s43588-024-00737-x
+
+【联系支持】
+
+遇到问题请：
+1. 查看 README.md 详细文档
+2. 检查日志文件 logs/ 目录
+3. 在GitHub提Issue
+
+==================================================================================
+祝您药物设计顺利！
+==================================================================================
+

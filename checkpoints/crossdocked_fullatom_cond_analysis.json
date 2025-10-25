@@ -1,0 +1,1059 @@
+{
+  "file_info": {
+    "文件名": "crossdocked_fullatom_cond.ckpt",
+    "文件路径": "D:\\Desktop\\DiffSBDD-main\\checkpoints\\crossdocked_fullatom_cond.ckpt",
+    "文件大小": "17.03 MB (17,861,341 bytes)",
+    "修改时间": "2025-10-25 09:14:24"
+  },
+  "structure": {
+    "顶层键": [
+      "epoch",
+      "global_step",
+      "pytorch-lightning_version",
+      "state_dict",
+      "loops",
+      "callbacks",
+      "optimizer_states",
+      "lr_schedulers",
+      "hparams_name",
+      "hyper_parameters"
+    ],
+    "各键的类型": {
+      "epoch": "int",
+      "global_step": "int",
+      "pytorch-lightning_version": "str",
+      "state_dict": "OrderedDict",
+      "loops": "dict",
+      "callbacks": "dict",
+      "optimizer_states": "list",
+      "lr_schedulers": "list",
+      "hparams_name": "str",
+      "hyper_parameters": "dict"
+    },
+    "训练轮数": 999,
+    "全局步数": 1562000
+  },
+  "hyperparameters": {
+    "训练参数": {
+      "batch_size": 16,
+      "lr": 0.001,
+      "num_workers": 0,
+      "augment_noise": 0,
+      "augment_rotation": false,
+      "clip_grad": true
+    },
+    "EGNN参数": {
+      "n_layers": 5,
+      "hidden_nf": 128,
+      "attention": true,
+      "normalization_factor": 100,
+      "aggregation_method": "sum"
+    },
+    "扩散参数": {
+      "diffusion_steps": 500,
+      "diffusion_noise_schedule": "polynomial_2",
+      "diffusion_loss_type": "l2"
+    },
+    "模型模式": "pocket_conditioning",
+    "口袋表示": "full-atom",
+    "数据集": "crossdock"
+  },
+  "architecture": {
+    "总参数数": "1,006,560",
+    "可训练参数数": "1,006,560",
+    "参数大小(MB)": "3.84",
+    "模块参数分布": {
+      "ddpm": 1006560
+    },
+    "EGNN层分析": {
+      "num_layers": 5,
+      "layers": [
+        {
+          "layer_num": 0,
+          "num_params": 198785,
+          "num_submodules": 20
+        },
+        {
+          "layer_num": 1,
+          "num_params": 198785,
+          "num_submodules": 20
+        },
+        {
+          "layer_num": 2,
+          "num_params": 198785,
+          "num_submodules": 20
+        },
+        {
+          "layer_num": 3,
+          "num_params": 198785,
+          "num_submodules": 20
+        },
+        {
+          "layer_num": 4,
+          "num_params": 198785,
+          "num_submodules": 20
+        }
+      ]
+    },
+    "参数详情": {
+      "ddpm.buffer": {
+        "shape": [
+          1
+        ],
+        "num_params": 1,
+        "dtype": "torch.float32"
+      },
+      "ddpm.gamma.gamma": {
+        "shape": [
+          501
+        ],
+        "num_params": 501,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.atom_encoder.0.weight": {
+        "shape": [
+          20,
+          10
+        ],
+        "num_params": 200,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.atom_encoder.0.bias": {
+        "shape": [
+          20
+        ],
+        "num_params": 20,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.atom_encoder.2.weight": {
+        "shape": [
+          32,
+          20
+        ],
+        "num_params": 640,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.atom_encoder.2.bias": {
+        "shape": [
+          32
+        ],
+        "num_params": 32,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.atom_decoder.0.weight": {
+        "shape": [
+          20,
+          32
+        ],
+        "num_params": 640,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.atom_decoder.0.bias": {
+        "shape": [
+          20
+        ],
+        "num_params": 20,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.atom_decoder.2.weight": {
+        "shape": [
+          10,
+          20
+        ],
+        "num_params": 200,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.atom_decoder.2.bias": {
+        "shape": [
+          10
+        ],
+        "num_params": 10,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.residue_encoder.0.weight": {
+        "shape": [
+          20,
+          10
+        ],
+        "num_params": 200,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.residue_encoder.0.bias": {
+        "shape": [
+          20
+        ],
+        "num_params": 20,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.residue_encoder.2.weight": {
+        "shape": [
+          32,
+          20
+        ],
+        "num_params": 640,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.residue_encoder.2.bias": {
+        "shape": [
+          32
+        ],
+        "num_params": 32,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.residue_decoder.0.weight": {
+        "shape": [
+          20,
+          32
+        ],
+        "num_params": 640,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.residue_decoder.0.bias": {
+        "shape": [
+          20
+        ],
+        "num_params": 20,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.residue_decoder.2.weight": {
+        "shape": [
+          10,
+          20
+        ],
+        "num_params": 200,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.residue_decoder.2.bias": {
+        "shape": [
+          10
+        ],
+        "num_params": 10,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.egnn.embedding.weight": {
+        "shape": [
+          128,
+          33
+        ],
+        "num_params": 4224,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.egnn.embedding.bias": {
+        "shape": [
+          128
+        ],
+        "num_params": 128,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.egnn.embedding_out.weight": {
+        "shape": [
+          33,
+          128
+        ],
+        "num_params": 4224,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.egnn.embedding_out.bias": {
+        "shape": [
+          33
+        ],
+        "num_params": 33,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.egnn.e_block_0.gcl_0.edge_mlp.0.weight": {
+        "shape": [
+          128,
+          258
+        ],
+        "num_params": 33024,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.egnn.e_block_0.gcl_0.edge_mlp.0.bias": {
+        "shape": [
+          128
+        ],
+        "num_params": 128,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.egnn.e_block_0.gcl_0.edge_mlp.2.weight": {
+        "shape": [
+          128,
+          128
+        ],
+        "num_params": 16384,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.egnn.e_block_0.gcl_0.edge_mlp.2.bias": {
+        "shape": [
+          128
+        ],
+        "num_params": 128,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.egnn.e_block_0.gcl_0.node_mlp.0.weight": {
+        "shape": [
+          128,
+          256
+        ],
+        "num_params": 32768,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.egnn.e_block_0.gcl_0.node_mlp.0.bias": {
+        "shape": [
+          128
+        ],
+        "num_params": 128,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.egnn.e_block_0.gcl_0.node_mlp.2.weight": {
+        "shape": [
+          128,
+          128
+        ],
+        "num_params": 16384,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.egnn.e_block_0.gcl_0.node_mlp.2.bias": {
+        "shape": [
+          128
+        ],
+        "num_params": 128,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.egnn.e_block_0.gcl_0.att_mlp.0.weight": {
+        "shape": [
+          1,
+          128
+        ],
+        "num_params": 128,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.egnn.e_block_0.gcl_0.att_mlp.0.bias": {
+        "shape": [
+          1
+        ],
+        "num_params": 1,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.egnn.e_block_0.gcl_equiv.coord_mlp.0.weight": {
+        "shape": [
+          128,
+          258
+        ],
+        "num_params": 33024,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.egnn.e_block_0.gcl_equiv.coord_mlp.0.bias": {
+        "shape": [
+          128
+        ],
+        "num_params": 128,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.egnn.e_block_0.gcl_equiv.coord_mlp.2.weight": {
+        "shape": [
+          128,
+          128
+        ],
+        "num_params": 16384,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.egnn.e_block_0.gcl_equiv.coord_mlp.2.bias": {
+        "shape": [
+          128
+        ],
+        "num_params": 128,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.egnn.e_block_0.gcl_equiv.coord_mlp.4.weight": {
+        "shape": [
+          1,
+          128
+        ],
+        "num_params": 128,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.egnn.e_block_0.gcl_equiv.cross_product_mlp.0.weight": {
+        "shape": [
+          128,
+          258
+        ],
+        "num_params": 33024,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.egnn.e_block_0.gcl_equiv.cross_product_mlp.0.bias": {
+        "shape": [
+          128
+        ],
+        "num_params": 128,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.egnn.e_block_0.gcl_equiv.cross_product_mlp.2.weight": {
+        "shape": [
+          128,
+          128
+        ],
+        "num_params": 16384,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.egnn.e_block_0.gcl_equiv.cross_product_mlp.2.bias": {
+        "shape": [
+          128
+        ],
+        "num_params": 128,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.egnn.e_block_0.gcl_equiv.cross_product_mlp.4.weight": {
+        "shape": [
+          1,
+          128
+        ],
+        "num_params": 128,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.egnn.e_block_1.gcl_0.edge_mlp.0.weight": {
+        "shape": [
+          128,
+          258
+        ],
+        "num_params": 33024,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.egnn.e_block_1.gcl_0.edge_mlp.0.bias": {
+        "shape": [
+          128
+        ],
+        "num_params": 128,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.egnn.e_block_1.gcl_0.edge_mlp.2.weight": {
+        "shape": [
+          128,
+          128
+        ],
+        "num_params": 16384,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.egnn.e_block_1.gcl_0.edge_mlp.2.bias": {
+        "shape": [
+          128
+        ],
+        "num_params": 128,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.egnn.e_block_1.gcl_0.node_mlp.0.weight": {
+        "shape": [
+          128,
+          256
+        ],
+        "num_params": 32768,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.egnn.e_block_1.gcl_0.node_mlp.0.bias": {
+        "shape": [
+          128
+        ],
+        "num_params": 128,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.egnn.e_block_1.gcl_0.node_mlp.2.weight": {
+        "shape": [
+          128,
+          128
+        ],
+        "num_params": 16384,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.egnn.e_block_1.gcl_0.node_mlp.2.bias": {
+        "shape": [
+          128
+        ],
+        "num_params": 128,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.egnn.e_block_1.gcl_0.att_mlp.0.weight": {
+        "shape": [
+          1,
+          128
+        ],
+        "num_params": 128,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.egnn.e_block_1.gcl_0.att_mlp.0.bias": {
+        "shape": [
+          1
+        ],
+        "num_params": 1,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.egnn.e_block_1.gcl_equiv.coord_mlp.0.weight": {
+        "shape": [
+          128,
+          258
+        ],
+        "num_params": 33024,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.egnn.e_block_1.gcl_equiv.coord_mlp.0.bias": {
+        "shape": [
+          128
+        ],
+        "num_params": 128,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.egnn.e_block_1.gcl_equiv.coord_mlp.2.weight": {
+        "shape": [
+          128,
+          128
+        ],
+        "num_params": 16384,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.egnn.e_block_1.gcl_equiv.coord_mlp.2.bias": {
+        "shape": [
+          128
+        ],
+        "num_params": 128,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.egnn.e_block_1.gcl_equiv.coord_mlp.4.weight": {
+        "shape": [
+          1,
+          128
+        ],
+        "num_params": 128,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.egnn.e_block_1.gcl_equiv.cross_product_mlp.0.weight": {
+        "shape": [
+          128,
+          258
+        ],
+        "num_params": 33024,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.egnn.e_block_1.gcl_equiv.cross_product_mlp.0.bias": {
+        "shape": [
+          128
+        ],
+        "num_params": 128,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.egnn.e_block_1.gcl_equiv.cross_product_mlp.2.weight": {
+        "shape": [
+          128,
+          128
+        ],
+        "num_params": 16384,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.egnn.e_block_1.gcl_equiv.cross_product_mlp.2.bias": {
+        "shape": [
+          128
+        ],
+        "num_params": 128,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.egnn.e_block_1.gcl_equiv.cross_product_mlp.4.weight": {
+        "shape": [
+          1,
+          128
+        ],
+        "num_params": 128,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.egnn.e_block_2.gcl_0.edge_mlp.0.weight": {
+        "shape": [
+          128,
+          258
+        ],
+        "num_params": 33024,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.egnn.e_block_2.gcl_0.edge_mlp.0.bias": {
+        "shape": [
+          128
+        ],
+        "num_params": 128,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.egnn.e_block_2.gcl_0.edge_mlp.2.weight": {
+        "shape": [
+          128,
+          128
+        ],
+        "num_params": 16384,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.egnn.e_block_2.gcl_0.edge_mlp.2.bias": {
+        "shape": [
+          128
+        ],
+        "num_params": 128,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.egnn.e_block_2.gcl_0.node_mlp.0.weight": {
+        "shape": [
+          128,
+          256
+        ],
+        "num_params": 32768,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.egnn.e_block_2.gcl_0.node_mlp.0.bias": {
+        "shape": [
+          128
+        ],
+        "num_params": 128,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.egnn.e_block_2.gcl_0.node_mlp.2.weight": {
+        "shape": [
+          128,
+          128
+        ],
+        "num_params": 16384,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.egnn.e_block_2.gcl_0.node_mlp.2.bias": {
+        "shape": [
+          128
+        ],
+        "num_params": 128,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.egnn.e_block_2.gcl_0.att_mlp.0.weight": {
+        "shape": [
+          1,
+          128
+        ],
+        "num_params": 128,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.egnn.e_block_2.gcl_0.att_mlp.0.bias": {
+        "shape": [
+          1
+        ],
+        "num_params": 1,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.egnn.e_block_2.gcl_equiv.coord_mlp.0.weight": {
+        "shape": [
+          128,
+          258
+        ],
+        "num_params": 33024,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.egnn.e_block_2.gcl_equiv.coord_mlp.0.bias": {
+        "shape": [
+          128
+        ],
+        "num_params": 128,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.egnn.e_block_2.gcl_equiv.coord_mlp.2.weight": {
+        "shape": [
+          128,
+          128
+        ],
+        "num_params": 16384,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.egnn.e_block_2.gcl_equiv.coord_mlp.2.bias": {
+        "shape": [
+          128
+        ],
+        "num_params": 128,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.egnn.e_block_2.gcl_equiv.coord_mlp.4.weight": {
+        "shape": [
+          1,
+          128
+        ],
+        "num_params": 128,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.egnn.e_block_2.gcl_equiv.cross_product_mlp.0.weight": {
+        "shape": [
+          128,
+          258
+        ],
+        "num_params": 33024,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.egnn.e_block_2.gcl_equiv.cross_product_mlp.0.bias": {
+        "shape": [
+          128
+        ],
+        "num_params": 128,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.egnn.e_block_2.gcl_equiv.cross_product_mlp.2.weight": {
+        "shape": [
+          128,
+          128
+        ],
+        "num_params": 16384,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.egnn.e_block_2.gcl_equiv.cross_product_mlp.2.bias": {
+        "shape": [
+          128
+        ],
+        "num_params": 128,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.egnn.e_block_2.gcl_equiv.cross_product_mlp.4.weight": {
+        "shape": [
+          1,
+          128
+        ],
+        "num_params": 128,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.egnn.e_block_3.gcl_0.edge_mlp.0.weight": {
+        "shape": [
+          128,
+          258
+        ],
+        "num_params": 33024,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.egnn.e_block_3.gcl_0.edge_mlp.0.bias": {
+        "shape": [
+          128
+        ],
+        "num_params": 128,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.egnn.e_block_3.gcl_0.edge_mlp.2.weight": {
+        "shape": [
+          128,
+          128
+        ],
+        "num_params": 16384,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.egnn.e_block_3.gcl_0.edge_mlp.2.bias": {
+        "shape": [
+          128
+        ],
+        "num_params": 128,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.egnn.e_block_3.gcl_0.node_mlp.0.weight": {
+        "shape": [
+          128,
+          256
+        ],
+        "num_params": 32768,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.egnn.e_block_3.gcl_0.node_mlp.0.bias": {
+        "shape": [
+          128
+        ],
+        "num_params": 128,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.egnn.e_block_3.gcl_0.node_mlp.2.weight": {
+        "shape": [
+          128,
+          128
+        ],
+        "num_params": 16384,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.egnn.e_block_3.gcl_0.node_mlp.2.bias": {
+        "shape": [
+          128
+        ],
+        "num_params": 128,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.egnn.e_block_3.gcl_0.att_mlp.0.weight": {
+        "shape": [
+          1,
+          128
+        ],
+        "num_params": 128,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.egnn.e_block_3.gcl_0.att_mlp.0.bias": {
+        "shape": [
+          1
+        ],
+        "num_params": 1,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.egnn.e_block_3.gcl_equiv.coord_mlp.0.weight": {
+        "shape": [
+          128,
+          258
+        ],
+        "num_params": 33024,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.egnn.e_block_3.gcl_equiv.coord_mlp.0.bias": {
+        "shape": [
+          128
+        ],
+        "num_params": 128,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.egnn.e_block_3.gcl_equiv.coord_mlp.2.weight": {
+        "shape": [
+          128,
+          128
+        ],
+        "num_params": 16384,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.egnn.e_block_3.gcl_equiv.coord_mlp.2.bias": {
+        "shape": [
+          128
+        ],
+        "num_params": 128,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.egnn.e_block_3.gcl_equiv.coord_mlp.4.weight": {
+        "shape": [
+          1,
+          128
+        ],
+        "num_params": 128,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.egnn.e_block_3.gcl_equiv.cross_product_mlp.0.weight": {
+        "shape": [
+          128,
+          258
+        ],
+        "num_params": 33024,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.egnn.e_block_3.gcl_equiv.cross_product_mlp.0.bias": {
+        "shape": [
+          128
+        ],
+        "num_params": 128,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.egnn.e_block_3.gcl_equiv.cross_product_mlp.2.weight": {
+        "shape": [
+          128,
+          128
+        ],
+        "num_params": 16384,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.egnn.e_block_3.gcl_equiv.cross_product_mlp.2.bias": {
+        "shape": [
+          128
+        ],
+        "num_params": 128,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.egnn.e_block_3.gcl_equiv.cross_product_mlp.4.weight": {
+        "shape": [
+          1,
+          128
+        ],
+        "num_params": 128,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.egnn.e_block_4.gcl_0.edge_mlp.0.weight": {
+        "shape": [
+          128,
+          258
+        ],
+        "num_params": 33024,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.egnn.e_block_4.gcl_0.edge_mlp.0.bias": {
+        "shape": [
+          128
+        ],
+        "num_params": 128,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.egnn.e_block_4.gcl_0.edge_mlp.2.weight": {
+        "shape": [
+          128,
+          128
+        ],
+        "num_params": 16384,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.egnn.e_block_4.gcl_0.edge_mlp.2.bias": {
+        "shape": [
+          128
+        ],
+        "num_params": 128,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.egnn.e_block_4.gcl_0.node_mlp.0.weight": {
+        "shape": [
+          128,
+          256
+        ],
+        "num_params": 32768,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.egnn.e_block_4.gcl_0.node_mlp.0.bias": {
+        "shape": [
+          128
+        ],
+        "num_params": 128,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.egnn.e_block_4.gcl_0.node_mlp.2.weight": {
+        "shape": [
+          128,
+          128
+        ],
+        "num_params": 16384,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.egnn.e_block_4.gcl_0.node_mlp.2.bias": {
+        "shape": [
+          128
+        ],
+        "num_params": 128,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.egnn.e_block_4.gcl_0.att_mlp.0.weight": {
+        "shape": [
+          1,
+          128
+        ],
+        "num_params": 128,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.egnn.e_block_4.gcl_0.att_mlp.0.bias": {
+        "shape": [
+          1
+        ],
+        "num_params": 1,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.egnn.e_block_4.gcl_equiv.coord_mlp.0.weight": {
+        "shape": [
+          128,
+          258
+        ],
+        "num_params": 33024,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.egnn.e_block_4.gcl_equiv.coord_mlp.0.bias": {
+        "shape": [
+          128
+        ],
+        "num_params": 128,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.egnn.e_block_4.gcl_equiv.coord_mlp.2.weight": {
+        "shape": [
+          128,
+          128
+        ],
+        "num_params": 16384,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.egnn.e_block_4.gcl_equiv.coord_mlp.2.bias": {
+        "shape": [
+          128
+        ],
+        "num_params": 128,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.egnn.e_block_4.gcl_equiv.coord_mlp.4.weight": {
+        "shape": [
+          1,
+          128
+        ],
+        "num_params": 128,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.egnn.e_block_4.gcl_equiv.cross_product_mlp.0.weight": {
+        "shape": [
+          128,
+          258
+        ],
+        "num_params": 33024,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.egnn.e_block_4.gcl_equiv.cross_product_mlp.0.bias": {
+        "shape": [
+          128
+        ],
+        "num_params": 128,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.egnn.e_block_4.gcl_equiv.cross_product_mlp.2.weight": {
+        "shape": [
+          128,
+          128
+        ],
+        "num_params": 16384,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.egnn.e_block_4.gcl_equiv.cross_product_mlp.2.bias": {
+        "shape": [
+          128
+        ],
+        "num_params": 128,
+        "dtype": "torch.float32"
+      },
+      "ddpm.dynamics.egnn.e_block_4.gcl_equiv.cross_product_mlp.4.weight": {
+        "shape": [
+          1,
+          128
+        ],
+        "num_params": 128,
+        "dtype": "torch.float32"
+      }
+    }
+  },
+  "optimizer": {
+    "状态键": [
+      "state",
+      "param_groups"
+    ],
+    "参数组数量": 1,
+    "学习率": 0.001,
+    "优化器类型": "<class 'dict",
+    "betas": [
+      0.9,
+      0.999
+    ],
+    "eps": 1e-08,
+    "weight_decay": 1e-12,
+    "状态参数数量": 111,
+    "状态包含的键": [
+      "step",
+      "exp_avg",
+      "exp_avg_sq",
+      "max_exp_avg_sq"
+    ]
+  },
+  "callbacks": {
+    "回调函数": [
+      "ModelCheckpoint{'monitor': 'loss/val', 'mode': 'min', 'every_n_train_steps': 0, 'every_n_epochs': 1, 'train_time_interval': None, 'save_on_train_epoch_end': True}"
+    ],
+    "最佳模型得分": -20.816247940063477,
+    "最佳模型路径": "/mnt/beegfs/bulk/mirror/yuanqi/DiffSBDD_dev/ligand-pocket-ddpm/training_logs/conditional-full-crossdock-egnn-nf128-jointnf32-n_layers5-lr1e-3-steps500/checkpoints/best-model-epoch=epoch=987.ckpt"
+  },
+  "statistics": {
+    "总参数数": "1,006,560",
+    "参数大小": "3.84",
+    "EGNN层数": 5,
+    "隐藏层维度": 128,
+    "注意力机制": true,
+    "扩散步数": 500,
+    "训练轮数": 999,
+    "全局步数": 1562000
+  }
+}

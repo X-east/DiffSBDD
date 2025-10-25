@@ -1,0 +1,84 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environment
+venv/
+ENV/
+env/
+.venv
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Model checkpoints and weights (通常很大，不建议上传)
+*.ckpt
+*.pth
+*.pt
+*.h5
+*.pb
+
+# 保留README但排除实际的大模型文件
+# 如果想上传模型，可以注释掉上面的 *.ckpt
+
+# 数据文件
+*.npz
+*.pkl
+*.pickle
+data/crossdock_data/
+data/moad_data/
+
+# 训练输出
+outputs/
+results/
+logs/
+wandb/
+lightning_logs/
+
+# 生成的分子文件（可能很多）
+*.sdf
+*.pdb
+*.mol2
+# 保留example目录下的示例文件
+!example/*.sdf
+!example/*.pdb
+
+# 临时文件
+*.tmp
+*.temp
+.DS_Store
+Thumbs.db
+
+# 压缩文件
+*.zip
+*.tar.gz
+*.gz
+
+# 大型数据集文件
+data/timesplit_*/*
+
