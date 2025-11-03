@@ -326,13 +326,24 @@ class UncertaintyBasedSelector:
     
     def _update_known_space(self, selected_molecules, selected_indices, candidate_fps):
         """更新已知化学空间"""
-        new_fps = [candidate_fps[i] for i in selected_indices if candidate_fps[i] is not None]
-        new_smiles = [Chem.MolToSmiles(mol) for mol in selected_molecules if mol is not None]
+        # 同时过滤指纹和SMILES，确保数据一致性
+        new_data = []
+        for i, mol in zip(selected_indices, selected_molecules):
+            if candidate_fps[i] is not None and mol is not None:
+                try:
+                    smiles = Chem.MolToSmiles(mol)
+                    new_data.append((candidate_fps[i], smiles))
+                except Exception as e:
+                    self.logger.debug(f"转换SMILES失败: {e}")
+                    continue
+        
+        new_fps = [fp for fp, _ in new_data]
+        new_smiles = [smi for _, smi in new_data]
         
         self.known_fps.extend(new_fps)
         self.known_smiles.extend(new_smiles)
         
-        self.logger.info(f"已知空间更新: {len(self.known_fps)} 个分子")
+        self.logger.info(f"已知空间更新: {len(self.known_fps)} 个分子 (本次新增: {len(new_fps)})")
     
     def _save_records(self, iteration, stats, selected_scores_df):
         """保存选择记录"""

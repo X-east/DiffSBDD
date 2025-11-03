@@ -55,11 +55,12 @@ class MoleculeEvaluator:
         }
         
         if not use_docking:
-            # 如果不使用对接打分，重新分配权重
+            # 如果不使用对接打分，重新归一化权重（创建新字典避免修改原始值）
             total = sum([v for k, v in self.weights.items() if k != 'Docking'])
-            for k in self.weights:
-                if k != 'Docking':
-                    self.weights[k] = self.weights[k] / total
+            self.weights = {
+                k: (v / total if k != 'Docking' else 0.0)
+                for k, v in self.weights.items()
+            }
             self.logger.info("未启用对接打分，权重已重新分配")
     
     @staticmethod

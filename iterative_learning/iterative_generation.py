@@ -306,6 +306,8 @@ class IterativeLearning:
         self.logger.info(f"\n{stats}")
         
         # 存储到内存池（用于后续迭代）
+        # 清理旧的池以释放内存
+        self.current_molecules_pool.clear()
         self.current_molecules_pool = selected_molecules
         
         return selected_molecules, selected_scores_df
@@ -430,6 +432,9 @@ class IterativeLearning:
             iteration=iteration
         )
         
+        # 保存候选数量（用于统计）
+        n_candidates = len(candidate_molecules)
+        
         # 清理候选分子列表
         del candidate_molecules
         self._cleanup_memory()
@@ -438,7 +443,7 @@ class IterativeLearning:
         iteration_stats = {
             'iteration': iteration,
             'n_generated': n_generate,
-            'n_candidates': len(prev_molecules) + len(new_molecules) if iteration > 1 else n_generate,
+            'n_candidates': n_candidates,
             'n_selected': len(selected_molecules),
             'avg_qed': float(scores_df['QED'].mean()),
             'avg_sa': float(scores_df['SA'].mean()),
@@ -551,15 +556,80 @@ class IterativeLearning:
         print(f"最终报告已保存到: {report_file}")
 
 
+def load_config(config_file):
+    """从YAML文件加载配置"""
+    import yaml
+    with open(config_file, 'r', encoding='utf-8') as f:
+        config = yaml.safe_load(f)
+    return config
+
+
+def config_to_args(config):
+    """将配置字典转换为命令行参数格式"""
+    args_dict = {}
+    
+    # 路径配置
+    if 'paths' in config:
+        args_dict['checkpoint'] = config['paths'].get('checkpoint')
+        args_dict['pdbfile'] = config['paths'].get('pdbfile')
+        args_dict['output_dir'] = config['paths'].get('output_dir')
+    
+    # 口袋定义
+    if 'pocket' in config:
+        args_dict['ref_ligand'] = config['pocket'].get('ref_ligand')
+        args_dict['pocket_ids'] = config['pocket'].get('pocket_ids')
+        # 如果pocket_ids是列表，转换为逗号分隔的字符串
+        if isinstance(args_dict['pocket_ids'], list):
+            args_dict['pocket_ids'] = ','.join(args_dict['pocket_ids'])
+    
+    # 迭代参数
+    if 'iteration' in config:
+        args_dict['n_iterations'] = config['iteration'].get('n_iterations', 30)
+        args_dict['train_epochs'] = config['iteration'].get('train_epochs', 50)
+        args_dict['freeze_layers'] = config['iteration'].get('freeze_layers', 3)
+    
+    # 训练参数
+    if 'training' in config:
+        args_dict['batch_size'] = config['training'].get('batch_size', 8)
+        args_dict['lr'] = config['training'].get('learning_rate', 1e-4)
+    
+    # 生成参数
+    if 'generation' in config:
+        args_dict['timesteps'] = config['generation'].get('timesteps')
+    
+    # 评估参数
+    if 'evaluation' in config:
+        args_dict['use_docking'] = config['evaluation'].get('use_docking', False)
+    
+    # 不确定性参数
+    if 'uncertainty' in config:
+        args_dict['alpha_start'] = config['uncertainty'].get('alpha_start', 0.5)
+        args_dict['alpha_end'] = config['uncertainty'].get('alpha_end', 0.03)
+    
+    # 恢复训练
+    if 'resume' in config:
+        args_dict['resume_from'] = config['resume'].get('resume_from')
+        args_dict['continue_on_error'] = config['resume'].get('continue_on_error', False)
+    
+    return args_dict
+
+
 def main():
     parser = argparse.ArgumentParser(description='迭代学习分子生成系统')
     
-    # 必需参数
-    parser.add_argument('--checkpoint', type=str, required=True,
+    # 配置文件和预设参数
+    parser.add_argument('--config', type=str, default=None,
+                        help='配置文件路径（YAML格式）')
+    parser.add_argument('--preset', type=str, default=None,
+                        choices=['default', 'quick_test', 'high_quality', 'fast_training'],
+                        help='使用预设配置')
+    
+    # 必需参数（如果使用配置文件则变为可选）
+    parser.add_argument('--checkpoint', type=str, default=None,
                         help='初始模型检查点路径')
-    parser.add_argument('--pdbfile', type=str, required=True,
+    parser.add_argument('--pdbfile', type=str, default=None,
                         help='蛋白质PDB文件路径')
-    parser.add_argument('--output_dir', type=str, required=True,
+    parser.add_argument('--output_dir', type=str, default=None,
                         help='输出目录路径')
     
     # 口袋定义（二选一）
@@ -606,7 +676,74 @@ def main():
     
     args = parser.parse_args()
     
-    # 验证参数（在IterativeLearning.__init__中会再次验证）
+    # 处理配置文件和预设
+    config_values = {}
+    
+    # 1. 如果指定了配置文件，加载配置
+    if args.config:
+        config = load_config(args.config)
+        
+        # 如果指定了预设，应用预设覆盖
+        if args.preset and 'presets' in config and args.preset in config['presets']:
+            preset_config = config['presets'][args.preset]
+            # 合并预设配置到主配置
+            for key, value in preset_config.items():
+                if key == 'train_epochs' and 'iteration' in config:
+                    config['iteration']['train_epochs'] = value
+                elif key == 'freeze_layers' and 'iteration' in config:
+                    config['iteration']['freeze_layers'] = value
+                elif key == 'batch_size' and 'training' in config:
+                    config['training']['batch_size'] = value
+                elif key == 'learning_rate' and 'training' in config:
+                    config['training']['learning_rate'] = value
+                elif key == 'n_iterations' and 'iteration' in config:
+                    config['iteration']['n_iterations'] = value
+                elif key == 'initial_molecules' and 'generation' in config:
+                    config['generation']['initial_molecules'] = value
+                elif key == 'subsequent_molecules' and 'generation' in config:
+                    config['generation']['subsequent_molecules'] = value
+                elif key == 'n_select' and 'generation' in config:
+                    config['generation']['n_select'] = value
+                elif key == 'use_docking' and 'evaluation' in config:
+                    config['evaluation']['use_docking'] = value
+        
+        config_values = config_to_args(config)
+    
+    # 2. 如果只指定了预设（没有配置文件），使用默认config.yaml
+    elif args.preset:
+        default_config_path = Path(__file__).parent / 'config.yaml'
+        if default_config_path.exists():
+            config = load_config(default_config_path)
+            if 'presets' in config and args.preset in config['presets']:
+                preset_config = config['presets'][args.preset]
+                # 应用预设
+                for key, value in preset_config.items():
+                    if key == 'train_epochs' and 'iteration' in config:
+                        config['iteration']['train_epochs'] = value
+                    elif key == 'freeze_layers' and 'iteration' in config:
+                        config['iteration']['freeze_layers'] = value
+                    elif key == 'batch_size' and 'training' in config:
+                        config['training']['batch_size'] = value
+                    elif key == 'learning_rate' and 'training' in config:
+                        config['training']['learning_rate'] = value
+                    elif key == 'n_iterations' and 'iteration' in config:
+                        config['iteration']['n_iterations'] = value
+                config_values = config_to_args(config)
+    
+    # 3. 用配置值填充未设置的命令行参数（命令行参数优先级更高）
+    for key, value in config_values.items():
+        if value is not None and (not hasattr(args, key) or getattr(args, key) is None):
+            setattr(args, key, value)
+    
+    # 验证必需参数
+    if not args.checkpoint:
+        parser.error("必须指定 --checkpoint 或在配置文件中设置")
+    if not args.pdbfile:
+        parser.error("必须指定 --pdbfile 或在配置文件中设置")
+    if not args.output_dir:
+        parser.error("必须指定 --output_dir 或在配置文件中设置")
+    
+    # 验证口袋定义（在IterativeLearning.__init__中会再次验证）
     if not ((args.pocket_ids is None) ^ (args.ref_ligand is None)):
         parser.error("必须指定且仅指定 --pocket_ids 或 --ref_ligand 之一")
     

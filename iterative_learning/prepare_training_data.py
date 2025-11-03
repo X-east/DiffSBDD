@@ -66,8 +66,9 @@ class DataPreparer:
         
         pocket_residues = []
         for residue in pdb_model.get_residues():
-            if residue.id[1] == resi:
-                continue  # 跳过配体本身
+            # 跳过配体本身（仅当配体在PDB中时）
+            if resi is not None and residue.id[1] == resi:
+                continue
             
             res_coords = torch.from_numpy(
                 np.array([a.get_coord() for a in residue.get_atoms()]))
@@ -168,6 +169,7 @@ class DataPreparer:
         except Exception as e:
             logging.warning(f"生成3D构象失败: {e}，尝试不添加氢原子")
             try:
+                # 确保fallback路径也使用相同的随机种子以保证可重现性
                 AllChem.EmbedMolecule(mol, randomSeed=42)
                 AllChem.UFFOptimizeMolecule(mol, maxIters=200)
             except Exception as e2:
