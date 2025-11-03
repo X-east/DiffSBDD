@@ -120,6 +120,26 @@ wget -P checkpoints/ https://zenodo.org/record/8183747/files/crossdocked_fullato
 
 ### 2. 配置参数
 
+**方式A：使用配置文件（推荐）** ⭐ NEW
+
+编辑 `config.yaml` 文件：
+
+```yaml
+paths:
+  pdbfile: "./proteins/RE-CmeB.pdb"
+  output_dir: "./results/RE-CmeB_iterative"
+
+pocket:
+  ref_ligand: "A:330"
+
+iteration:
+  n_iterations: 30
+  train_epochs: 50
+  freeze_layers: 3  # 共5层，推荐冻结前3层
+```
+
+**方式B：编辑运行脚本**
+
 编辑 `run_example.sh` 文件，设置以下参数：
 
 ```bash
@@ -143,13 +163,31 @@ FREEZE_LAYERS=4
 
 ### 3. 运行迭代学习
 
+**使用配置文件（推荐）** ⭐ NEW：
+
 ```bash
 cd iterative_learning
+python iterative_generation.py --config config.yaml
+```
+
+或者使用预设配置：
+
+```bash
+# 快速测试（3次迭代）
+python iterative_generation.py --preset quick_test
+
+# 高质量模式
+python iterative_generation.py --preset high_quality
+```
+
+**使用Shell脚本**：
+
+```bash
 chmod +x run_example.sh
 ./run_example.sh
 ```
 
-或者直接使用Python命令：
+**直接使用命令行参数**：
 
 ```bash
 python iterative_generation.py \
@@ -167,6 +205,8 @@ python iterative_generation.py \
     --use_docking \
     --continue_on_error
 ```
+
+**注意**：命令行参数优先级高于配置文件
 
 ### 4. 恢复中断的训练（NEW! ✨）
 
@@ -488,9 +528,28 @@ img = Draw.MolsToGridImage(mols[:10], molsPerRow=5)
 img.save('top10_molecules.png')
 ```
 
-## 系统改进总结 ⭐ v1.2
+## 系统改进总结 ⭐ v1.2+
 
-本次更新（v1.2）在v1.1基础上增加了基于不确定性的智能选择策略：
+本次更新在v1.2基础上进行了重要代码优化和功能增强：
+
+### 0. ✨ 新增统一配置文件
+- **配置文件**: `config.yaml` - 统一管理所有参数
+- **预设配置**: 快速测试、高质量、快速训练等场景
+- **灵活使用**: 支持配置文件 + 命令行参数组合
+- **更易维护**: 集中管理避免参数分散
+
+### 1. 🔧 核心代码优化
+- **内存管理增强**: 添加psutil监控，实时显示内存使用情况
+- **参数验证改进**: 移除重复验证，提高代码效率
+- **错误处理完善**: 更细致的异常捕获和日志记录
+- **状态恢复完整**: 不确定性选择器支持完整状态恢复
+
+### 2. ⚡ 性能优化
+- **并行指纹计算**: 大量分子时自动启用多进程加速
+- **智能阈值**: 少于100个分子用串行，多于100个用并行
+- **CPU利用**: 使用CPU核心数的一半，避免系统过载
+
+### 3. 📊 v1.2核心功能：基于不确定性的智能选择策略
 
 ### 1. ✨ 新增核心功能：基于不确定性的智能选择
 
@@ -591,7 +650,7 @@ python iterative_generation.py ... --alpha_start 0.4 --alpha_end 0.01
 
 ---
 
-**版本**: v1.1 (2025-10-24更新)  
+**版本**: v1.2 (2024-10-25更新)  
 **主要改进**: 日志系统、训练恢复、内存优化、错误修复
 
 **祝你在药物设计中取得成功！** 🧪💊

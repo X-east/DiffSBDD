@@ -170,17 +170,50 @@ class IterativeLearning:
             self.iteration_history = state.get('iteration_history', [])
             self.logger.info(f"从迭代 {resume_from} 恢复训练")
             self.logger.info(f"已加载 {len(self.iteration_history)} 条历史记录")
+            
+            # 恢复不确定性选择器的已知化学空间
+            if hasattr(self, 'uncertainty_selector') and self.uncertainty_selector:
+                try:
+                    self.uncertainty_selector.load_known_space(resume_from)
+                    self.logger.info("不确定性选择器状态已恢复")
+                except Exception as e:
+                    self.logger.warning(f"恢复不确定性选择器状态失败: {e}")
+                    
         except Exception as e:
             self.logger.error(f"加载状态失败: {e}")
             self.current_iteration = resume_from
     
     def _cleanup_memory(self):
-        """清理内存"""
-        self.current_molecules_pool.clear()
-        gc.collect()
-        if torch.cuda.is_available():
-            torch.cuda.empty_cache()
-        self.logger.debug("内存已清理")
+        """清理内存并监控使用情况"""
+        try:
+            import psutil
+            process = psutil.Process()
+            mem_before = process.memory_info().rss / 1024 / 1024  # MB
+            
+            # 清理分子池
+            self.current_molecules_pool.clear()
+            
+            # 强制垃圾回收
+            gc.collect()
+            
+            # 清理GPU缓存
+            if torch.cuda.is_available():
+                torch.cuda.empty_cache()
+                gpu_mem_allocated = torch.cuda.memory_allocated() / 1024 / 1024  # MB
+                gpu_mem_cached = torch.cuda.memory_reserved() / 1024 / 1024  # MB
+                self.logger.debug(f"GPU内存: 已分配={gpu_mem_allocated:.1f}MB, 缓存={gpu_mem_cached:.1f}MB")
+            
+            mem_after = process.memory_info().rss / 1024 / 1024
+            freed = mem_before - mem_after
+            self.logger.debug(f"系统内存: {mem_before:.1f}MB → {mem_after:.1f}MB (释放: {freed:.1f}MB)")
+            
+        except ImportError:
+            # 如果psutil未安装，使用基础清理
+            self.current_molecules_pool.clear()
+            gc.collect()
+            if torch.cuda.is_available():
+                torch.cuda.empty_cache()
+            self.logger.debug("内存已清理（未安装psutil，无法显示详细信息）")
         
     def generate_molecules(self, model, n_samples, iteration):
         """
@@ -200,13 +233,9 @@ class IterativeLearning:
         
         model.eval()
         
-        # 确保参数互斥性
+        # 准备参数（已在__init__中验证互斥性）
         pocket_ids = self.args.pocket_ids.split(',') if self.args.pocket_ids else None
         ref_ligand = self.args.ref_ligand
-        
-        # 验证互斥性
-        if not ((pocket_ids is None) ^ (ref_ligand is None)):
-            raise ValueError("pocket_ids 和 ref_ligand 必须且仅能指定一个")
         
         self.logger.debug(f"生成参数: pocket_ids={pocket_ids}, ref_ligand={ref_ligand}")
         

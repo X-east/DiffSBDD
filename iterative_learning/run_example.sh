@@ -20,7 +20,7 @@ REF_LIGAND="A:330"  # 格式：链:残基编号
 # 迭代参数
 N_ITERATIONS=30      # 迭代次数
 TRAIN_EPOCHS=50      # 每次迭代的训练轮数
-FREEZE_LAYERS=4      # 冻结的EGNN底层数量（总共6层）
+FREEZE_LAYERS=3      # 冻结的EGNN底层数量（共5层，推荐冻结前3层）
 
 # 训练参数
 BATCH_SIZE=8         # 批次大小（根据GPU内存调整）

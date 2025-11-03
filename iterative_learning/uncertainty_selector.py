@@ -84,7 +84,63 @@ class UncertaintyBasedSelector:
         return np.clip(alpha, self.alpha_end, self.alpha_start)
     
     def compute_fingerprints(self, molecules: List[Chem.Mol]) -> List:
-        """计算分子指纹"""
+        """
+        计算分子指纹（并行化处理）
+        
+        Args:
+            molecules: 分子列表
+            
+        Returns:
+            指纹列表
+        """
+        # 对于少量分子，使用串行处理更快
+        if len(molecules) < 100:
+            return self._compute_fingerprints_serial(molecules)
+        
+        # 对于大量分子，使用并行处理
+        try:
+            from multiprocessing import Pool, cpu_count
+            import os
+            
+            # 使用CPU核心数的一半，避免过载
+            n_processes = max(1, cpu_count() // 2)
+            
+            self.logger.debug(f"并行计算指纹: {len(molecules)} 个分子, {n_processes} 进程")
+            
+            with Pool(n_processes) as pool:
+                fingerprints = pool.starmap(
+                    self._compute_single_fingerprint,
+                    [(mol, self.fp_radius, self.fp_bits) for mol in molecules]
+                )
+            
+            return fingerprints
+            
+        except Exception as e:
+            self.logger.warning(f"并行计算失败，使用串行处理: {e}")
+            return self._compute_fingerprints_serial(molecules)
+    
+    @staticmethod
+    def _compute_single_fingerprint(mol, radius, n_bits):
+        """
+        计算单个分子指纹（静态方法，用于并行处理）
+        
+        Args:
+            mol: 分子对象
+            radius: Morgan指纹半径
+            n_bits: 指纹位数
+            
+        Returns:
+            指纹对象或None
+        """
+        if mol is None:
+            return None
+        try:
+            return AllChem.GetMorganFingerprintAsBitVect(mol, radius, nBits=n_bits)
+        except:
+            return None
+    
+    def _compute_fingerprints_serial(self, molecules: List[Chem.Mol]) -> List:
+        """串行计算分子指纹（备用方法）"""
         fingerprints = []
         for mol in molecules:
             if mol is not None:
@@ -94,7 +150,7 @@ class UncertaintyBasedSelector:
                     )
                     fingerprints.append(fp)
                 except Exception as e:
-                    self.logger.warning(f"计算指纹失败: {e}")
+                    self.logger.debug(f"计算指纹失败: {e}")
                     fingerprints.append(None)
             else:
                 fingerprints.append(None)
@@ -319,10 +375,52 @@ class UncertaintyBasedSelector:
         self.logger.info("-"*70 + "\n")
     
     def load_known_space(self, iteration: int):
-        """加载已知空间（用于恢复训练）"""
+        """
+        加载已知空间（用于恢复训练）
+        从之前的迭代中重建已知分子空间
+        """
+        # 1. 加载选择历史
         history_file = self.uncertainty_dir / "selection_history.csv"
         if history_file.exists():
             history_df = pd.read_csv(history_file)
             self.selection_history = history_df.to_dict('records')
             self.logger.info(f"加载选择历史: {len(self.selection_history)} 条记录")
+        
+        # 2. 从之前迭代的选中分子重建已知空间
+        molecules_dir = self.output_dir / "molecules"
+        if not molecules_dir.exists():
+            self.logger.warning("分子目录不存在，无法恢复已知空间")
+            return
+        
+        self.known_fps = []
+        self.known_smiles = []
+        
+        # 读取从迭代1到当前迭代-1的所有选中分子
+        for i in range(1, iteration):
+            selected_file = molecules_dir / f"iteration_{i}_selected.sdf"
+            if selected_file.exists():
+                try:
+                    suppl = Chem.SDMolSupplier(str(selected_file))
+                    mols = [mol for mol in suppl if mol is not None]
+                    
+                    # 计算指纹和SMILES
+                    for mol in mols:
+                        try:
+                            fp = AllChem.GetMorganFingerprintAsBitVect(
+                                mol, self.fp_radius, nBits=self.fp_bits
+                            )
+                            smiles = Chem.MolToSmiles(mol)
+                            self.known_fps.append(fp)
+                            self.known_smiles.append(smiles)
+                        except Exception as e:
+                            self.logger.debug(f"处理分子失败: {e}")
+                            continue
+                    
+                    self.logger.debug(f"从迭代 {i} 加载了 {len(mols)} 个分子")
+                    
+                except Exception as e:
+                    self.logger.warning(f"读取迭代 {i} 的分子失败: {e}")
+                    continue
+        
+        self.logger.info(f"已知化学空间已恢复: {len(self.known_fps)} 个分子")
 

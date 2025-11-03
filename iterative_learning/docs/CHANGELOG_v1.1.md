@@ -415,6 +415,6 @@ output_dir/
 ---
 
 **版本**: v1.1  
-**发布日期**: 2025-10-24  
+**发布日期**: 2024-10-24  
 **基于**: DiffSBDD (Nature Computational Science, 2024)
 

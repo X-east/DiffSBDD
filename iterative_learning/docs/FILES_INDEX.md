@@ -175,11 +175,41 @@ EGNN (5层):
 
 ## 脚本工具
 
-### 5. run_example.sh
-**用途**: 运行脚本，一键启动迭代学习
+### 5. config.yaml ⭐ NEW
+**用途**: 统一配置文件，管理所有参数
 
 **功能**:
-- 配置所有参数
+- 集中管理所有配置参数
+- 提供预设配置（quick_test, high_quality等）
+- 支持灵活组合使用
+
+**主要配置项**:
+```yaml
+paths:          # 文件路径
+pocket:         # 口袋定义
+iteration:      # 迭代参数
+training:       # 训练参数
+evaluation:     # 评估参数
+uncertainty:    # 不确定性选择参数
+```
+
+**使用方法**:
+```bash
+# 1. 编辑配置
+nano config.yaml
+
+# 2. 使用配置文件运行
+python iterative_generation.py --config config.yaml
+
+# 3. 或使用预设
+python iterative_generation.py --preset quick_test
+```
+
+### 6. run_example.sh
+**用途**: 运行脚本，Shell脚本方式启动
+
+**功能**:
+- 配置所有参数（Shell变量）
 - 检查文件存在性
 - 调用iterative_generation.py
 
@@ -191,6 +221,7 @@ OUTPUT_DIR    # 输出目录
 REF_LIGAND    # 口袋定义
 N_ITERATIONS  # 迭代次数
 TRAIN_EPOCHS  # 训练轮数
+FREEZE_LAYERS # 冻结层数（推荐3）
 ```
 
 **使用方法**:
@@ -204,7 +235,7 @@ nano run_example.sh
 
 ---
 
-### 6. setup_environment.sh
+### 7. setup_environment.sh
 **用途**: 环境设置，自动配置运行环境
 
 **功能**:
@@ -224,7 +255,7 @@ nano run_example.sh
 
 ---
 
-### 7. check_setup.py
+### 8. check_setup.py
 **用途**: 环境检查，验证配置是否正确
 
 **检查项**:
@@ -258,7 +289,7 @@ CUDA                  ✓ 通过
 
 ## 文档
 
-### 8. README.md
+### 9. README.md
 **语言**: 英文  
 **内容**: 完整详细的技术文档
 
@@ -278,7 +309,7 @@ CUDA                  ✓ 通过
 
 ---
 
-### 9. 使用说明.txt
+### 10. 使用说明.txt
 **语言**: 中文  
 **内容**: 简明快速指南
 
@@ -295,7 +326,7 @@ CUDA                  ✓ 通过
 
 ---
 
-### 10. 快速开始指南.md
+### 11. 快速开始指南.md
 **语言**: 中文  
 **内容**: 详细的逐步教程
 
@@ -312,7 +343,7 @@ CUDA                  ✓ 通过
 
 ---
 
-### 11. PROJECT_OVERVIEW.md
+### 12. PROJECT_OVERVIEW.md
 **语言**: 中文  
 **内容**: 项目技术总览
 
@@ -331,7 +362,7 @@ CUDA                  ✓ 通过
 
 ---
 
-### 12. FILES_INDEX.md
+### 13. FILES_INDEX.md
 **语言**: 中文  
 **内容**: 本文件，完整的文件清单
 
@@ -341,7 +372,7 @@ CUDA                  ✓ 通过
 
 ## 工作目录
 
-### 13. checkpoints/
+### 14. checkpoints/
 **用途**: 存储模型检查点
 
 **内容**:
@@ -350,7 +381,7 @@ CUDA                  ✓ 通过
 
 ---
 
-### 14. proteins/
+### 15. proteins/
 **用途**: 存储蛋白PDB文件
 
 **内容**:
@@ -364,7 +395,7 @@ CUDA                  ✓ 通过
 
 ---
 
-### 15. results/
+### 16. results/
 **用途**: 存储所有输出结果
 
 **结构**:
@@ -455,7 +486,7 @@ results/RE-CmeB_iterative/
 
 ## 更新日志
 
-**版本 1.2** (2025-10-25)
+**版本 1.2** (2024-10-25)
 - ✓ 新增基于不确定性的智能选择策略
 - ✓ 前期大胆探索，后期聚焦优化
 - ✓ 避免过早陷入局部最优
@@ -463,14 +494,14 @@ results/RE-CmeB_iterative/
 - ✓ 新增uncertainty_analysis输出目录
 - ✓ 更新所有文档和脚本
 
-**版本 1.1** (2025-10-24)
+**版本 1.1** (2024-10-24)
 - ✓ 修复参数互斥性检查
 - ✓ 修复3D构象生成
 - ✓ 新增完整日志系统
 - ✓ 新增训练恢复功能
 - ✓ 内存优化和错误处理增强
 
-**版本 1.0** (2025-10-23)
+**版本 1.0** (2024-10-23)
 - ✓ 创建完整的迭代学习系统
 - ✓ 实现多维度分子评估
 - ✓ 实现冻结层训练策略
@@ -495,6 +526,6 @@ results/RE-CmeB_iterative/
 
 ---
 
-**最后更新**: 2025-10-24  
+**最后更新**: 2024-10-25  
 **维护者**: DiffSBDD Iterative Learning Team
 

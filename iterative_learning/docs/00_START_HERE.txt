@@ -42,11 +42,19 @@
 --------------
 1. 将RE-CmeB蛋白的PDB文件复制到 proteins/ 目录
 
-2. 编辑 run_example.sh，修改以下参数：
+2. 配置参数（两种方式）：
+   
+   方式A：编辑 config.yaml（推荐）⭐
+   - pdbfile: 你的蛋白文件路径
+   - ref_ligand: 口袋定义
+   - freeze_layers: 3（共5层EGNN）
+   
+   方式B：编辑 run_example.sh
    - PDBFILE: 你的蛋白文件路径
-   - REF_LIGAND: 口袋定义（配体位置或残基列表）
+   - REF_LIGAND: 口袋定义
+   - FREEZE_LAYERS: 3（推荐配置）
 
-3. 根据你的GPU内存调整 BATCH_SIZE（可选）
+3. 根据你的GPU内存调整 batch_size（可选）
 
 
 第3步：运行
@@ -54,13 +62,18 @@
 激活环境并运行：
 
   conda activate diffsbdd
+  
+  # 使用配置文件（推荐）
+  python iterative_generation.py --config config.yaml
+  
+  # 或使用Shell脚本
   ./run_example.sh
 
 然后等待结果（约30-60小时，取决于GPU性能）
 
 ═══════════════════════════════════════════════════════════════════════════
 
-📂 文件说明（13个文件）
+📂 文件说明（14个文件）⭐ 已更新
 ═══════════════════════════════════════════════════════════════════════════
 
 【必读文档】
@@ -82,9 +95,11 @@ iterative_generation.py   主程序（协调整个流程）
 molecule_evaluator.py     分子评估器（计算评分）
 prepare_training_data.py  数据准备（格式转换）
 train_frozen.py          冻结训练（固定底层训练上层）
+uncertainty_selector.py  不确定性选择（智能探索）
 
-【工具脚本】
+【配置和工具】
 ------------
+config.yaml              统一配置文件（推荐使用）⭐ NEW
 run_example.sh           运行脚本（配置和启动）
 setup_environment.sh     环境设置（自动安装）
 check_setup.py          环境检查（验证配置）
@@ -238,6 +253,6 @@ A: 运行 python check_setup.py
 祝您在RE-CmeB蛋白药物设计研究中取得成功！🧬💊🎊
 
 ═══════════════════════════════════════════════════════════════════════════
-版本: v1.0  |  日期: 2025-10-24  |  基于: DiffSBDD
+版本: v1.2  |  日期: 2024-10-25  |  基于: DiffSBDD
 ═══════════════════════════════════════════════════════════════════════════
 
